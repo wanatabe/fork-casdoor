@@ -64,6 +64,16 @@
   </tr>
 </table>
 
+## 🔧 Fork 构建与部署（离线）
+
+本 fork 不使用 CI/CD：镜像在本地构建，导出 tar 后离线导入服务器。
+
+```bash
+bash deploy/sso release   # 构建 STANDARD 镜像 → 写回版本号 → 导出 tar 到 deploy/images/
+```
+
+版本号唯一入口是根目录 `VERSION` 文件。首次部署、更新、回滚、备份的完整手册见 [deploy/README.md](deploy/README.md)。
+
 ## ❤️ Sponsors
 
 <table>

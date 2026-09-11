@@ -1,0 +1,51 @@
+services:
+  casdoor:
+    image: ${CASDOOR_IMAGE_NAME:-casdoor-sso}:${CASDOOR_VERSION:-0.0.0-unset}
+    restart: on-failure:1
+    # 与仓库根 docker-compose.yml（开发用）保持一致：首次启动自动建库
+    entrypoint: /bin/sh -c './server --createDatabase=true'
+    ports:
+      - "${CASDOOR_PORT:-8000}:8000"
+    environment:
+      RUNNING_IN_DOCKER: "true"
+    volumes:
+      - ./conf:/conf
+      - casdoor-logs:/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    networks:
+      - internal
+
+  db:
+    image: ${MYSQL_IMAGE:-mysql:8.0.25}
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-CHANGE_ME}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-casdoor}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - internal
+
+volumes:
+  mysql-data:
+  casdoor-logs:
+
+networks:
+  internal:

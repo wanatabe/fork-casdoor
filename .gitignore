@@ -43,3 +43,12 @@ web/cypress/videos/
 web/cypress/screenshots/
 web-old/cypress/videos/
 web-old/cypress/screenshots/
+
+# deploy: offline image exports and local secrets (see deploy/README.md)
+!deploy/casdoor
+deploy/images/
+deploy/casdoor/.env
+!deploy/casdoor/.env.example
+!deploy/casdoor/casdoor.local.env
+deploy/casdoor/conf/app.conf
+deploy/casdoor/backup/
